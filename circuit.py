@@ -116,7 +116,7 @@ class Characterization(Circuit):
         plt.axvline(vstar_spec, color='k')
         plt.grid()
         plt.xlim(vstar_spec - 20, vstar_spec + 20)
-        plt.ylim(0, 50.001)
+        plt.ylim(0, 20.001)
         plt.title(u'Drain current, $I_D = {0:.2f}$ µA'.format(ibias * 1e6))
         plt.xlabel(r'Sizing, $V^*$ [mV]')
         plt.ylabel(u'Drain current, $I_D$ [µA]')
@@ -201,7 +201,7 @@ class Verification(Circuit):
         plt.ylabel(r'Gain, $a_{v}$')
         plt.legend(loc='upper right')
 
-    def plot_gain_drain(self, fig, subplot, lengths):
+    def plot_gain_drain(self, fig, subplot, lengths, cmo, swo_min, swo_max):
         # Circuit VER gain vs drain
         fig.add_subplot(*subplot)
         with open(self.pkl) as infile:
@@ -212,8 +212,105 @@ class Verification(Circuit):
             y = database[length_key]['gain']
             plt.plot(x, y, label=length_key)
 
+        plt.axvline(cmo, color='k')
+        plt.axvspan(swo_min, swo_max, color='k', alpha=0.1)
         plt.grid()
         plt.title('Gain')
         plt.xlabel(r'Drain voltage, $V_{DS}$ [V]')
         plt.ylabel(r'Gain, $a_{v}$')
         plt.legend(loc='upper right')
+
+class Transient(Circuit):
+    def gather(self, vdd):
+        length_key = self.database.keys()[0]
+        f = '{0}_{1}.data'.format(self.data_filename_prefix, length_key)
+        raw = np.loadtxt(f)
+        self.database[length_key]['time']  = raw[:,0]
+        self.database[length_key]['gate']  = raw[:,1]
+        self.database[length_key]['drain'] = raw[:,3]
+        self.database[length_key]['vdd']   = vdd
+
+    def plot_transient(self, fig, subplot):
+        # Circuit TRAN
+        fig.add_subplot(*subplot)
+        with open(self.pkl) as infile:
+            database = pickle.load(infile)
+        length_key = database.keys()[0]
+        x = database[length_key]['time']
+        yo = database[length_key]['drain']
+        yi = database[length_key]['gate']
+        plt.plot(x, yo, label='Output')
+        plt.plot(x, yi, label='Input')
+
+        vdd = database[length_key]['vdd']
+        plt.ylim(0, vdd + 0.001)
+        plt.grid()
+        plt.xlabel(r'Time, $t$ [s]')
+        plt.ylabel(r'Voltage, $V$ [V]')
+        plt.legend(loc='upper right')
+
+        cmi = yi.mean()
+        cmi_min = yi.min()
+        cmi_max = yi.max()
+        swi = cmi_max - cmi_min
+        cmo = yo.mean()
+        cmo_min = yo.min()
+        cmo_max = yo.max()
+        swo = cmo_max - cmo_min
+
+        s = r'$v_{{ipp}} = {0:.0f}$ mV, $v_{{opp}} = {1:.0f}$ mV'.format(swi * 1e3, swo * 1e3)
+        plt.title('Transient Response, ' + s)
+
+        return [cmo, cmo_min, cmo_max]
+
+class Frequency(Circuit):
+    def gather(self, vdd):
+        length_key = self.database.keys()[0]
+        f = '{0}_{1}.data'.format(self.data_filename_prefix, length_key)
+        raw = np.loadtxt(f)
+        freq  = self.database[length_key]['freq']  = raw[:,0]
+        gain  = self.database[length_key]['gain']  = raw[:,1]
+        phase = self.database[length_key]['phase'] = raw[:,3] * 180 / np.pi
+
+        ft   = self.database[length_key]['ft'] = self.y_of_x(0, gain, freq)
+        phft = self.database[length_key]['phft'] = self.y_of_x(0, phase, freq)
+
+    def plot_gain(self, fig, subplot):
+        # Circuit FREQ gain
+        fig.add_subplot(*subplot)
+        with open(self.pkl) as infile:
+            database = pickle.load(infile)
+        length_key = database.keys()[0]
+        x = database[length_key]['freq']
+        y = database[length_key]['gain']
+        plt.plot(x, y)
+
+        ft   = database[length_key]['ft']
+        phft = database[length_key]['phft']
+        plt.axvspan(ft, phft, color='k', alpha=0.1)
+        plt.grid()
+        plt.xscale('log')
+        plt.title('Gain Frequency Response')
+        plt.xlabel(r'Frequency, $f$ [Hz]')
+        plt.ylabel(r'Gain, $a_v$ [dB]')
+
+    def plot_phase(self, fig, subplot):
+        # Circuit FREQ phase
+        fig.add_subplot(*subplot)
+        with open(self.pkl) as infile:
+            database = pickle.load(infile)
+        length_key = database.keys()[0]
+        x = database[length_key]['freq']
+        y = database[length_key]['phase']
+        plt.plot(x, y)
+
+        ft   = database[length_key]['ft']
+        phft = database[length_key]['phft']
+        plt.axvspan(ft, phft, color='k', alpha=0.1)
+        plt.grid()
+        plt.xscale('log')
+        plt.ylim(-45, 225)
+        plt.yticks(np.array([-45, 0, 45, 90, 135, 180, 225]))
+        plt.title('Phase Frequency Response')
+        plt.xlabel(r'Frequency, $f$ [Hz]')
+        plt.ylabel(u'Phase, $\phi$ [°]')

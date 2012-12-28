@@ -1,4 +1,4 @@
-NETLIST: Circuit TRAN Transient
+NETLIST: Circuit FREQ Frequency
 
 .include 65nm_bulk.pm
 
@@ -7,16 +7,16 @@ ID dg  0           dc {{ bias_current }}
 M1 dg  dg  vdd vdd pmos w={{ width_mirror }} l={{ length_mirror }}
 M2 vvo dg  vdd vdd pmos w={{ width_mirror }} l={{ length_mirror }}
 MN vvo vvi 0   0   nmos w={{ width }} l={{ length }}
-VG vvi 0           dc 0 ac sin({{ cm_input }} {{ swing }} {{ freq }} 0 0)
+VG vvi 0           dc {{ cm_input }} ac sin({{ cm_input }} {{ swing }} {{ freq }} 0 0)
 CL vvo 0           {{ load_capacitance }}
 
 .control
 save vvi
 save vvo
-tran {{ step }} {{ stop_time }}
+ac dec 100 1 100T
 wrdata {{ data_filename }}
-+ vvi
-+ vvo
++ db(vvo)
++ ph(vvo)
 .endc
 
 .end
@@ -26,8 +26,6 @@ wrdata {{ data_filename }}
 *cm_input
 *swing
 *freq
-*stop_time
-*step
 *width_mirror
 *length_mirror
 *load_capacitance
