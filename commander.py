@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 from circuit import Characterization, Verification, Transient, Frequency
+import design
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -9,27 +10,27 @@ import warnings
 warnings.simplefilter('ignore')
 
 # Characterization
-width_char = 0.647e-6
-lengths = np.arange(200, 400, 100) * 1e-9
-widths = []
+width_char = design.char['width']
+lengths    = design.char['lengths']
+widths     = []
 
 # Specifications
-vdd = 1.2
-fu = 1e7
-cl = 1e-12
-vstar = 120e-3
-gm = 2 * np.pi * fu * cl
-ibias_tweak = 1
-ibias = gm * vstar / 2.0 * ibias_tweak
+vdd         = design.specs['VDD']
+fu          = design.specs['Unity Gain Frequency']
+cl          = design.specs['Load Capacitance']
+vstar       = design.specs['V*']
+gm          = design.specs['Transconductance']
+ibias_tweak = design.specs['Bias Current Tweak']
+ibias       = design.specs['Bias Current']
 
 # Verification
-wm  = 5e-6
-lm  = 500e-9
-cmi_xlim = (0.44, 0.46)
-cmi = 0.447
-swi = 0.0021
-f   = 1
-wl_pair = 1
+wm       = design.verify['Active Load Width']
+lm       = design.verify['Active Load Length']
+cmi_xlim = design.verify['Common Mode Input View Span']
+cmi      = design.verify['Common Mode Input Voltage']
+swi      = design.verify['Input Voltage Half-Swing']
+f        = design.verify['Input Frequency']
+wl_pair  = design.verify['W/L Design Pair']
 
 cktCHAR = Characterization(netlist='cktCHAR.sp')
 cktVER = Verification(netlist='cktVEr.sp')
