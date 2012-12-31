@@ -1,4 +1,5 @@
 *.data
 bsim4v4.out
 *.pdf
+*.pkl
 simulate.sp
