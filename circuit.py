@@ -35,8 +35,8 @@ class Circuit(object):
             s = template.render(ckt_params)
             simulation_netlist.write(s)
 
-        subprocess.call(['ngspice', '-b', filename], stdout=PIPE, stderr=PIPE)
-        #subprocess.call(['ngspice', '-b', filename])
+        #subprocess.call(['ngspice', '-b', filename], stdout=PIPE, stderr=PIPE)
+        subprocess.call(['ngspice', '-b', filename])
 
     def write(self):
         with open(self.pkl, 'w') as outfile:
