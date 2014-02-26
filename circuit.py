@@ -91,7 +91,7 @@ class Characterization(Circuit):
 
         vstar_spec = database[length_key]['vstar_spec'] * 1e3
         plt.axvline(vstar_spec, color='k')
-        plt.grid()
+        plt.grid(True)
         plt.xlim(0, 400)
         plt.title('Figure of merit')
         plt.xlabel(r'Sizing, $V^*$ [mV]')
@@ -114,9 +114,9 @@ class Characterization(Circuit):
         ibias = database[length_key]['ibias']
         vstar_spec = database[length_key]['vstar_spec'] * 1e3
         plt.axvline(vstar_spec, color='k')
-        plt.grid()
+        plt.grid(True)
         plt.xlim(vstar_spec - 20, vstar_spec + 20)
-        plt.ylim(0, 20.001)
+        plt.ylim(0, 50.001)
         plt.title(u'Drain current, $I_D = {0:.2f}$ µA'.format(ibias * 1e6))
         plt.xlabel(r'Sizing, $V^*$ [mV]')
         plt.ylabel(u'Drain current, $I_D$ [µA]')
@@ -135,7 +135,7 @@ class Characterization(Circuit):
 
         vod_cmi = database[length_key]['vod_cmi'] * 1e3
         plt.axvline(vod_cmi, color='k')
-        plt.grid()
+        plt.grid(True)
         plt.xlim(-400, 400)
         plt.title('Figure of merit')
         plt.xlabel(r'Overdrive voltage, $V_{od}$ [V]')
@@ -173,7 +173,7 @@ class Verification(Circuit):
         sw  = database[length_key]['swing']
         plt.axvline(cmi, color='k')
         plt.axvspan(cmi-sw, cmi+sw, color='k', alpha=0.1)
-        plt.grid()
+        plt.grid(True)
         plt.title('DC Transfer Characteristic')
         plt.xlabel(r'Gate voltage, $V_{GS}$ [V]')
         plt.ylabel(r'Drain voltage, $V_{DS}$ [V]')
@@ -194,7 +194,7 @@ class Verification(Circuit):
         sw  = database[length_key]['swing']
         plt.axvline(cmi, color='k')
         plt.axvspan(cmi-sw, cmi+sw, color='k', alpha=0.1)
-        plt.grid()
+        plt.grid(True)
         plt.xlim(*cmi_xlim)
         plt.title('Gain')
         plt.xlabel(r'Gate voltage, $V_{GS}$ [V]')
@@ -214,7 +214,7 @@ class Verification(Circuit):
 
         plt.axvline(cmo, color='k')
         plt.axvspan(swo_min, swo_max, color='k', alpha=0.1)
-        plt.grid()
+        plt.grid(True)
         plt.title('Gain')
         plt.xlabel(r'Drain voltage, $V_{DS}$ [V]')
         plt.ylabel(r'Gain, $a_{v}$')
@@ -244,7 +244,7 @@ class Transient(Circuit):
 
         vdd = database[length_key]['vdd']
         plt.ylim(0, vdd + 0.001)
-        plt.grid()
+        plt.grid(True)
         plt.xlabel(r'Time, $t$ [s]')
         plt.ylabel(r'Voltage, $V$ [V]')
         plt.legend(loc='upper right')
@@ -288,7 +288,8 @@ class Frequency(Circuit):
         ft   = database[length_key]['ft']
         phft = database[length_key]['phft']
         plt.axvspan(ft, phft, color='k', alpha=0.1)
-        plt.grid()
+        plt.axhline(0, color='k')
+        plt.grid(True)
         plt.xscale('log')
         plt.title('Gain Frequency Response')
         plt.xlabel(r'Frequency, $f$ [Hz]')
@@ -307,7 +308,8 @@ class Frequency(Circuit):
         ft   = database[length_key]['ft']
         phft = database[length_key]['phft']
         plt.axvspan(ft, phft, color='k', alpha=0.1)
-        plt.grid()
+        plt.axhline(0, color='k')
+        plt.grid(True)
         plt.xscale('log')
         plt.ylim(-45, 225)
         plt.yticks(np.array([-45, 0, 45, 90, 135, 180, 225]))

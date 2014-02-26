@@ -26,8 +26,8 @@ ibias       = design.specs['Bias Current']
 # Verification
 wm       = design.verify['Active Load Width']
 lm       = design.verify['Active Load Length']
-cmi_xlim = design.verify['Common Mode Input View Span']
-cmi      = design.verify['Common Mode Input Voltage']
+cmi_xlim = design.verify['Common Mode Input View Span']# = (0.27, 0.29)
+cmi      = design.verify['Common Mode Input Voltage']# = 0.2835
 swi      = design.verify['Input Voltage Half-Swing']
 f        = design.verify['Input Frequency']
 wl_pair  = design.verify['W/L Design Pair']
