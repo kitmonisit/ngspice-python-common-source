@@ -1,5 +1,7 @@
 *.data
+bsim4.out
 bsim4v4.out
 *.pdf
 *.pkl
+*.pyc
 simulate.sp
