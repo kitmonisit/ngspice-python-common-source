@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from circuit import Characterization, Verification, Transient, Frequency
 import design
@@ -33,7 +33,7 @@ f        = design.verify['Input Frequency']
 wl_pair  = design.verify['W/L Design Pair']
 
 cktCHAR = Characterization(netlist='cktCHAR.sp')
-cktVER = Verification(netlist='cktVEr.sp')
+cktVER = Verification(netlist='cktVER.sp')
 cktTRAN = Transient(netlist='cktTRAN.sp')
 cktFREQ = Frequency(netlist='cktFREQ.sp')
 
